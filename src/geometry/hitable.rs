@@ -16,7 +16,7 @@ pub trait Hitable {
 
 impl HitRecord {
     pub fn new(ray: &Ray, point: Point3d, normal: Vector3d, t: f64) -> Self {
-        let front_face = ray.direction.dot(&normal) > 0.0;
+        let front_face = ray.direction.dot(&normal) < 0.0;
         let normal = if front_face { normal } else { -normal };
         HitRecord {
             point,
@@ -59,7 +59,7 @@ mod tests {
             direction: Vector3d::new([1.0, 0.0, 0.0]),
         };
         let point = Point3d::new([1.0, 2.0, 3.0]);
-        let normal = Vector3d::new([1.0, 0.0, 0.0]);
+        let normal = Vector3d::new([-1.0, 0.0, 0.0]);
         let t = 2.0;
         let hit_record = HitRecord::new(&ray, point, normal, t);
 
@@ -76,7 +76,7 @@ mod tests {
             direction: Vector3d::new([1.0, 0.0, 0.0]),
         };
         let point = Point3d::new([1.0, 2.0, 3.0]);
-        let normal = Vector3d::new([-1.0, -1.0, 0.0]);
+        let normal = Vector3d::new([1.0, 1.0, 0.0]);
         let t = 2.0;
         let hit_record = HitRecord::new(&ray, point, normal, t);
 

@@ -1,19 +1,27 @@
 use std::fs::File;
 use std::io::prelude::*;
 
-mod geometry {
+pub mod geometry {
     mod hitable;
+    pub use hitable::{HitRecord, Hitable};
     mod hitable_list;
+    pub use hitable_list::HitableList;
     mod sphere;
+    pub use sphere::Sphere;
 }
-mod color;
-mod pixel;
-mod progress;
-mod ray;
-mod renderer;
-mod vector3;
-use ray::Ray;
-use vector3::{Point3d, Vector3d};
+pub mod color;
+pub mod pixel;
+pub mod progress;
+pub mod ray;
+pub mod renderer;
+pub mod vector3;
+pub mod math;
+pub mod scene;
+pub use ray::Ray;
+pub use color::Color;
+pub use pixel::Pixel;
+pub use scene::Scene;
+pub use vector3::{Point3d, Vector3d};
 
 fn main() {
     // Image
@@ -21,10 +29,10 @@ fn main() {
     let image_width = 400;
     let image_height = (image_width as f64 / aspect_ratio) as i32;
 
+    // Camera
     let viewport_height = 2.0;
     let viewport_width = aspect_ratio * viewport_height;
     let focal_length = 1.0;
-
     let origin = Point3d::new([0.0, 0.0, 0.0]);
     let horizontal = Vector3d::new([viewport_width, 0.0, 0.0]);
     let vertical = Vector3d::new([0.0, viewport_height, 0.0]);
@@ -32,6 +40,9 @@ fn main() {
     let half_vertical = vertical / 2.0;
     let adjustment = Vector3d::new([0.0, 0.0, focal_length]);
     let lower_left_corner = origin - half_horizontal - half_vertical - adjustment;
+
+    // Scene
+    let scene = Scene::sample();
 
     // Render
     let mut ppm_file = String::new();
@@ -47,7 +58,7 @@ fn main() {
             let v = j as f64 / (image_height - 1) as f64;
             let direction = lower_left_corner + horizontal * u + vertical * v - origin;
             let r = Ray { origin, direction };
-            let color = renderer::ray_color(&r);
+            let color = renderer::ray_color(&r, &scene);
             let pixel = color.to_pixel().to_string();
             ppm_file.push_str(&format!("{}\n", pixel));
         }

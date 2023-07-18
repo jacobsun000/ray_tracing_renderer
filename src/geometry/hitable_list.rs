@@ -7,6 +7,11 @@ pub struct HitableList {
 
 impl Hitable for HitableList {
     fn hit(&self, r: &Ray) -> Option<HitRecord> {
-        self.hitables.iter().map(|a| a.hit(r)).min().flatten()
+        self.hitables
+            .iter()
+            .map(|a| a.hit(r))
+            .filter(|x| x.is_some())
+            .min()
+            .flatten()
     }
 }
