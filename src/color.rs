@@ -1,5 +1,5 @@
-use crate::vector3::Vector3;
 use crate::pixel::Pixel;
+use crate::vector3::Vector3;
 
 pub type Color = Vector3<f64>;
 

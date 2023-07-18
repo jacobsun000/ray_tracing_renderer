@@ -20,14 +20,18 @@ pub trait Scalar:
     + Div<Output = Self>
     + Into<f64>
     + Sum<Self>
+    + PartialEq
 {
 }
 
 impl Scalar for f64 {}
 impl Scalar for i32 {}
 
-#[derive(Clone, Copy, Debug)]
-pub struct Vector3<T> {
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Vector3<T>
+where
+    T: Scalar,
+{
     pub data: [T; 3],
 }
 
@@ -60,11 +64,14 @@ where
     }
 
     pub fn length(&self) -> f64 {
-        self.length().sqrt()
+        self.length_squared().sqrt()
     }
 
     pub fn unit_vector(&self) -> Vector3<f64> {
-        self.data.iter().map(|&a| a.into() / self.length()).collect()
+        self.data
+            .iter()
+            .map(|&a| a.into() / self.length())
+            .collect()
     }
 
     pub fn dot(&self, other: &Vector3<T>) -> T {
@@ -85,7 +92,8 @@ where
 }
 
 impl<T> ToString for Vector3<T>
-where T: Scalar
+where
+    T: Scalar,
 {
     fn to_string(&self) -> String {
         format!("{} {} {}", self.x(), self.y(), self.z())
@@ -140,15 +148,13 @@ where
     }
 }
 
-impl<T> PartialEq<Vector3<T>> for Vector3<T>
+impl<T> Neg for Vector3<T>
 where
     T: Scalar,
 {
-    fn eq(&self, other: &Vector3<T>) -> bool {
-        self.data
-            .iter()
-            .zip(other.data.iter())
-            .all(|(&a, &b)| a == b)
+    type Output = Vector3<T>;
+    fn neg(self) -> Self::Output {
+        self.data.iter().map(|&a| -a).collect()
     }
 }
 
@@ -204,7 +210,7 @@ where
     }
 }
 
-impl<T> Mul for Vector3<T>
+impl<T> Mul<Vector3<T>> for Vector3<T>
 where
     T: Scalar,
 {
