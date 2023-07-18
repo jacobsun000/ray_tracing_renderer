@@ -65,6 +65,6 @@ fn main() {
     }
 
     println!("\nFinished rendering");
-    let mut file = File::create("test.ppm").expect("Failed to create file");
+    let mut file = File::create("./image/test.ppm").expect("Failed to create file");
     file.write_all(ppm_file.as_bytes()).expect("Write error");
 }
