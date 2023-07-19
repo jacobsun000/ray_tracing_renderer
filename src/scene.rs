@@ -1,8 +1,10 @@
+use crate::camera::Camera;
 use crate::geometry::*;
 use crate::Point3d;
 
 pub struct Scene {
     pub objects: HitableList,
+    pub camera: Camera,
 }
 
 impl Scene {
@@ -18,8 +20,14 @@ impl Scene {
         };
         world.push(Box::new(sphere0));
         world.push(Box::new(sphere1));
+
+        let aspect_ratio = 16.0 / 9.0;
+        let viewport_width = 3.5;
+        let focal_length = 1.0;
+
         return Scene {
             objects: HitableList { hitables: world },
+            camera: Camera::new(aspect_ratio, viewport_width, focal_length),
         };
     }
 }

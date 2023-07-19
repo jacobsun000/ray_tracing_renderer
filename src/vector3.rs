@@ -226,7 +226,8 @@ where
 }
 
 impl<T> Sum<Vector3<T>> for Vector3<T>
-where T: Scalar,
+where
+    T: Scalar,
 {
     fn sum<I: Iterator<Item = Vector3<T>>>(iter: I) -> Self {
         iter.fold(Default::default(), |a, b| a + b)
