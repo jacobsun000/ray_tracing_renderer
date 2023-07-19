@@ -29,7 +29,7 @@ use vector3::{Point3d, Vector3d};
 fn main() {
     // Image
     let aspect_ratio = 16.0 / 9.0;
-    let width = 1920;
+    let width = 400;
     let height = (width as f64 / aspect_ratio) as usize;
     let mut image = Image::new("./image/test.ppm", width, height);
 
@@ -39,6 +39,7 @@ fn main() {
     // Render
     let option = renderer::RenderOption {
         samples_per_pixel: 100,
+        max_depth: 50,
     };
     let mut renderer = Renderer {
         scene: &scene,

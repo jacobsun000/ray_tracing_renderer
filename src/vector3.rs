@@ -1,3 +1,4 @@
+use rand::distributions::uniform::{SampleRange, SampleUniform};
 use rand::distributions::{Distribution, Standard};
 use rand::{thread_rng, Rng};
 use std::cmp::PartialEq;
@@ -103,10 +104,29 @@ where
 impl<T> Vector3<T>
 where
     T: Scalar,
+    T: SampleUniform,
+    std::ops::Range<T>: SampleRange<T>,
     Standard: Distribution<[T; 3]>,
 {
-    fn random() -> Self {
+    pub fn random() -> Self {
         Vector3::new(thread_rng().gen())
+    }
+}
+
+impl Vector3<f64>
+{
+    pub fn random_range(min: f64, max: f64) -> Self {
+        let r = || thread_rng().gen_range(min..max);
+        Vector3::new([r(), r(), r()])
+    }
+
+    pub fn random_in_unit_sphere() -> Self {
+        loop {
+            let v = Self::random_range(-1.0, 1.0);
+            if v.length_squared() < 1.0 {
+                return v;
+            }
+        }
     }
 }
 

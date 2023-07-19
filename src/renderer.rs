@@ -6,10 +6,21 @@ use crate::Color;
 use crate::Pixel;
 use crate::Ray;
 use crate::Scene;
+use crate::Vector3d;
 
-fn ray_color(ray: &Ray, scene: &Scene) -> Color {
+fn ray_color(ray: &Ray, scene: &Scene, depth: usize) -> Color {
+    if depth == 0 {
+        return Color::new([0.0, 0.0, 0.0]);
+    }
     if let Some(rec) = scene.objects.hit(ray) {
-        return (rec.normal + Color::new([1.0, 1.0, 1.0])) * 0.5;
+        let target = rec.point + rec.normal + Vector3d::random_in_unit_sphere();
+        return (ray_color(
+            &Ray {
+                origin: rec.point,
+                direction: target - rec.point,
+            },
+            scene, depth - 1
+        )) * 0.5;
     }
     let unit_direction = ray.direction.unit_vector();
     let t = 0.5 * (unit_direction.y() + 1.0);
@@ -18,6 +29,7 @@ fn ray_color(ray: &Ray, scene: &Scene) -> Color {
 
 pub struct RenderOption {
     pub samples_per_pixel: i32,
+    pub max_depth: usize,
 }
 
 pub struct Renderer<'a> {
@@ -37,7 +49,7 @@ impl<'a> Renderer<'a> {
         let v = || (y as f64 + r()) / (height - 1) as f64;
         let color: Color = (0..samples)
             .map(|_| camera.get_ray(u(), v()))
-            .map(|r| ray_color(&r, &self.scene))
+            .map(|r| ray_color(&r, &self.scene, self.option.max_depth))
             .sum();
         return color.to_pixel(samples);
     }
