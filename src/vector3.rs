@@ -27,7 +27,7 @@ pub trait Scalar:
 impl Scalar for f64 {}
 impl Scalar for i32 {}
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Default)]
 pub struct Vector3<T>
 where
     T: Scalar,
@@ -222,6 +222,14 @@ where
             .zip(other.data.iter())
             .map(|(&a, &b)| a * b)
             .collect()
+    }
+}
+
+impl<T> Sum<Vector3<T>> for Vector3<T>
+where T: Scalar,
+{
+    fn sum<I: Iterator<Item = Vector3<T>>>(iter: I) -> Self {
+        iter.fold(Default::default(), |a, b| a + b)
     }
 }
 
