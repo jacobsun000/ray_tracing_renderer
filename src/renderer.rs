@@ -13,7 +13,7 @@ fn ray_color(ray: &Ray, scene: &Scene, depth: usize) -> Color {
         return Color::new([0.0, 0.0, 0.0]);
     }
     if let Some(rec) = scene.objects.hit(ray) {
-        let target = rec.point + rec.normal + Vector3d::random_in_unit_sphere();
+        let target = rec.point + Vector3d::random_in_hemisphere(rec.normal);
         return (ray_color(
             &Ray {
                 origin: rec.point,

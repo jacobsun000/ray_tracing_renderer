@@ -113,8 +113,7 @@ where
     }
 }
 
-impl Vector3<f64>
-{
+impl Vector3<f64> {
     pub fn random_range(min: f64, max: f64) -> Self {
         let r = || thread_rng().gen_range(min..max);
         Vector3::new([r(), r(), r()])
@@ -126,6 +125,19 @@ impl Vector3<f64>
             if v.length_squared() < 1.0 {
                 return v;
             }
+        }
+    }
+
+    pub fn random_unit_vector() -> Self {
+        Self::random_in_unit_sphere().unit_vector()
+    }
+
+    pub fn random_in_hemisphere(normal: Vector3<f64>) -> Self {
+        let in_unit_sphere = Vector3::random_in_unit_sphere();
+        if in_unit_sphere.dot(&normal) > 0.0 {
+            in_unit_sphere // In the same hemisphere as the normal
+        } else {
+            -in_unit_sphere
         }
     }
 }

@@ -27,7 +27,7 @@ impl Hitable for Sphere {
 
         // Find the nearest root that lies in the acceptable range.
         let mut t = (-half_b - sqrtd) / a;
-        if t < 0.0 || 1e10 < t {
+        if t < 0.001 || 1e10 < t {
             t = (-half_b + sqrtd) / a;
             if t < 0.0 || 1e10 < t {
                 return None;
