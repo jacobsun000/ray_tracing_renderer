@@ -10,6 +10,13 @@ mod geometry {
     pub use sphere::Sphere;
 }
 
+mod material {
+    mod material;
+    pub use material::Material;
+    mod lambertian;
+    pub use lambertian::Lambertian;
+}
+
 mod camera;
 mod color;
 mod image;

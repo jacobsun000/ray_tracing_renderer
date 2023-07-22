@@ -1,6 +1,8 @@
 use crate::camera::Camera;
 use crate::geometry::*;
 use crate::Point3d;
+use crate::material::Material;
+use crate::Color;
 
 pub struct Scene {
     pub objects: HitableList,
@@ -13,10 +15,12 @@ impl Scene {
         let sphere0: Sphere = Sphere {
             center: Point3d::new([0.0, 0.0, -1.0]),
             radius: 0.5,
+            material: Material::Lambertian(Color::white())
         };
         let sphere1 = Sphere {
             center: Point3d::new([0.0, -100.5, -1.0]),
             radius: 100.0,
+            material: Material::Lambertian(Color::white())
         };
         world.push(Box::new(sphere0));
         world.push(Box::new(sphere1));

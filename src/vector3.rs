@@ -128,7 +128,7 @@ impl Vector3<f64> {
         }
     }
 
-    pub fn random_unit_vector() -> Self {
+    pub fn random_in_unit_vector() -> Self {
         Self::random_in_unit_sphere().unit_vector()
     }
 

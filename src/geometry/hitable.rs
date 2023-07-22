@@ -1,3 +1,4 @@
+use crate::material::Material;
 use crate::ray::Ray;
 use crate::vector3::{Point3d, Vector3d};
 use std::cmp::Ordering;
@@ -8,6 +9,7 @@ pub struct HitRecord {
     pub normal: Vector3d,
     pub t: f64,
     pub front_face: bool,
+    pub material: Material
 }
 
 pub trait Hitable {
@@ -15,7 +17,7 @@ pub trait Hitable {
 }
 
 impl HitRecord {
-    pub fn new(ray: &Ray, point: Point3d, normal: Vector3d, t: f64) -> Self {
+    pub fn new(ray: &Ray, point: Point3d, normal: Vector3d, t: f64, material: Material) -> Self {
         let front_face = ray.direction.dot(&normal) < 0.0;
         let normal = if front_face { normal } else { -normal };
         HitRecord {
@@ -23,6 +25,7 @@ impl HitRecord {
             normal,
             t,
             front_face,
+            material
         }
     }
 }
@@ -49,8 +52,8 @@ impl Ord for HitRecord {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ray::Ray;
     use crate::vector3::{Point3d, Vector3d};
+    use crate::Color;
 
     #[test]
     fn test_hitrecord_new() {
@@ -61,7 +64,7 @@ mod tests {
         let point = Point3d::new([1.0, 2.0, 3.0]);
         let normal = Vector3d::new([-1.0, 0.0, 0.0]);
         let t = 2.0;
-        let hit_record = HitRecord::new(&ray, point, normal, t);
+        let hit_record = HitRecord::new(&ray, point, normal, t, Material::Lambertian(Color::white()));
 
         assert_eq!(hit_record.point, point);
         assert_eq!(hit_record.normal, normal);
@@ -78,7 +81,8 @@ mod tests {
         let point = Point3d::new([1.0, 2.0, 3.0]);
         let normal = Vector3d::new([1.0, 1.0, 0.0]);
         let t = 2.0;
-        let hit_record = HitRecord::new(&ray, point, normal, t);
+        let material = Material::Lambertian(Color::white());
+        let hit_record = HitRecord::new(&ray, point, normal, t, material);
 
         assert_eq!(hit_record.point, point);
         assert_eq!(hit_record.normal, -normal);
@@ -93,12 +97,14 @@ mod tests {
             normal: Vector3d::new([3.0, 1.0, 0.0]),
             t: 2.0,
             front_face: true,
+            material: Material::Lambertian(Color::black())
         };
         let hit_record2 = HitRecord {
             point: Point3d::new([0.0, 2.0, 6.0]),
             normal: Vector3d::new([1.0, 4.0, 3.0]),
             t: 2.0,
             front_face: true,
+            material: Material::Lambertian(Color::white())
         };
 
         assert_eq!(hit_record1, hit_record2);
@@ -111,12 +117,14 @@ mod tests {
             normal: Vector3d::new([0.0, 1.0, 0.0]),
             t: 2.0,
             front_face: true,
+            material: Material::Lambertian(Color::white())
         };
         let hit_record2 = HitRecord {
             point: Point3d::new([1.0, 2.0, 3.0]),
             normal: Vector3d::new([0.0, 1.0, 0.0]),
             t: 3.0,
             front_face: true,
+            material: Material::Lambertian(Color::white())
         };
 
         assert!(hit_record1 < hit_record2);
